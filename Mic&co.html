@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAKE IT CREATES | MIC&CO </title>
+    
+    <!-- Google Fonts: Cormorant Garamond & Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deep: '#0a0a0a',
+                        charcoal: '#1a1a1a',
+                        ivory: '#f4f4f0',
+                        gold: '#c5a059',
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Montserrat"', 'sans-serif'],
+                    },
+                    spacing: {
+                        '128': '32rem',
+                    },
+                    transitionDuration: {
+                        '1500': '1500ms',
+                        '2000': '2000ms',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Resets & Typography */
+        body {
+            background-color: #0a0a0a;
+            color: #f4f4f0;
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor for custom one */
+        }
+        
+        ::selection {
+            background-color: #c5a059;
+            color: #0a0a0a;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c5a059;
+        }
+
+        /* Custom Cursor */
+        #custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 12px;
+            height: 12px;
+            background-color: rgba(244, 244, 240, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #0a0a0a;
+            opacity: 1;
+        }
+
+        #custom-cursor.view-mode {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(197, 160, 89, 0.9); /* Gold overlay */
+        }
+        
+        #custom-cursor .cursor-text {
+            display: none;
+        }
+        
+        #custom-cursor.view-mode .cursor-text {
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            body { cursor: auto; }
+            #custom-cursor { display: none; }
+        }
+
+        /* Ken Burns Effect */
+        .ken-burns {
+            animation: kenBurns 15s ease-out infinite alternate;
+        }
+        @keyframes kenBurns {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* Hero Crossfade */
+        .slide {
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* Scroll Indicator */
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #c5a059;
+            animation: scrollDown 2s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+        }
+        @keyframes scrollDown {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Editorial Grid (Desktop) */
+        @media (min-width: 1024px) {
+            .editorial-grid {
+                display: grid;
+                grid-template-columns: repeat(12, 1fr);
+                gap: 4rem;
+                align-items: center;
+            }
+            .grid-item-1 { grid-column: 1 / 8; }
+            .grid-item-2 { grid-column: 8 / 13; margin-top: 15rem; }
+            .grid-item-3 { grid-column: 2 / 7; margin-top: -10rem; }
+            .grid-item-4 { grid-column: 7 / 12; }
+        }
+
+        /* Image Hover Effects */
+        .portfolio-item {
+            overflow: hidden;
+            position: relative;
+        }
+        .portfolio-img {
+            transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .portfolio-overlay {
+            background: linear-gradient(to top, rgba(10,10,10,0.8) 0%, rgba(10,10,10,0) 50%);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .portfolio-item:hover .portfolio-img {
+            transform: scale(1.05);
+        }
+        .portfolio-item:hover .portfolio-overlay {
+            opacity: 1;
+        }
+        .portfolio-text {
+            transform: translateY(20px);
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.6s ease;
+            opacity: 0;
+        }
+        .portfolio-item:hover .portfolio-text {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Scroll Reveal Utility */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s cubic-bezier(0.19, 1, 0.22, 1), transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .reveal-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <!-- Custom Cursor -->
+    <div id="custom-cursor"><span class="cursor-text">VIEW</span></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-all duration-500 py-6 px-8 flex justify-between items-center mix-blend-difference hover:mix-blend-normal hover:bg-charcoal/90 backdrop-blur-sm">
+        <a href="#" class="font-serif text-2xl tracking-widest text-white uppercase z-10">Make it<br><span class="text-sm font-sans tracking-[0.3em] font-light text-gray-300">Creates</span></a>
+        
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex space-x-10">
+            <a href="#" class="text-xs tracking-[0.2em] font-light text-white hover:text-gold transition-colors duration-300">HOME</a>
+            <a href="#work" class="text-xs tracking-[0.2em] font-light text-white hover:text-gold transition-colors duration-300">WORK</a>
+            <a href="#services" class="text-xs tracking-[0.2em] font-light text-white hover:text-gold transition-colors duration-300">SERVICES</a>
+            <a href="#about" class="text-xs tracking-[0.2em] font-light text-white hover:text-gold transition-colors duration-300">ABOUT</a>
+            <a href="#journal" class="text-xs tracking-[0.2em] font-light text-white hover:text-gold transition-colors duration-300">JOURNAL</a>
+            <a href="#contact" class="text-xs tracking-[0.2em] font-light text-white hover:text-gold transition-colors duration-300">CONTACT</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden text-white focus:outline-none z-10" id="mobile-menu-btn">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" stroke-width="1" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative w-full h-screen overflow-hidden bg-deep">
+        <!-- Background Slider -->
+        <div class="absolute inset-0 z-0">
+            <!-- Slide 1 -->
+            <div class="slide active absolute inset-0">
+                <div class="w-full h-full bg-cover bg-center ken-burns" style="background-image: url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop');"></div>
+                <div class="absolute inset-0 bg-black/40"></div>
+            </div>
+            <!-- Slide 2 -->
+            <div class="slide absolute inset-0">
+                <div class="w-full h-full bg-cover bg-center ken-burns" style="background-image: url('https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=2070&auto=format&fit=crop');"></div>
+                <div class="absolute inset-0 bg-black/50"></div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="slide absolute inset-0">
+                <div class="w-full h-full bg-cover bg-center ken-burns" style="background-image: url('https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2070&auto=format&fit=crop');"></div>
+                <div class="absolute inset-0 bg-black/40"></div>
+            </div>
+        </div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 h-full flex flex-col justify-center items-center text-center px-4">
+            <p class="text-xs md:text-sm font-light tracking-[0.4em] mb-6 text-gray-300 reveal-up">MAKE. INSPIRE. CREATE.</p>
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl leading-tight mb-8 reveal-up" style="transition-delay: 100ms;">
+                Stories, <span class="italic text-gold">Framed</span><br>With Emotion.
+            </h1>
+            <p class="max-w-xl font-light text-sm md:text-base text-gray-300 leading-relaxed mb-12 reveal-up" style="transition-delay: 200ms;">
+                Cinematic photography crafted to preserve moments, emotions, and memories with timeless elegance.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 reveal-up" style="transition-delay: 300ms;">
+                <a href="#work" class="px-8 py-4 border border-white text-xs tracking-[0.2em] font-light hover:bg-gold hover:border-gold hover:text-black transition-all duration-500">EXPLORE THE STORIES</a>
+                <a href="#contact" class="px-8 py-4 border border-gray-600 text-xs tracking-[0.2em] font-light hover:border-white transition-all duration-500">CONTACT STUDIO</a>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 flex flex-col items-center">
+            <span class="text-[10px] tracking-[0.3em] font-light text-gray-400 mb-3">SCROLL</span>
+            <div class="scroll-line"></div>
+        </div>
+    </header>
+
+    <!-- Featured Work Section -->
+    <section id="work" class="py-32 px-6 md:px-12 lg:px-24 bg-deep">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-24 text-center reveal-up">
+                <p class="text-xs tracking-[0.3em] text-gold mb-4 uppercase">Portfolio</p>
+                <h2 class="font-serif text-4xl md:text-6xl text-white">Selected Stories</h2>
+            </div>
+
+            <!-- Editorial Grid -->
+            <div class="editorial-grid flex flex-col lg:grid gap-y-16">
+                
+                <!-- Project 1 -->
+                <div class="grid-item-1 portfolio-item group cursor-pointer reveal-up" onclick="openGallery('gallery1')">
+                    <div class="relative w-full aspect-[4/5] overflow-hidden bg-charcoal">
+                        <img src="41.jpg.jpg"" alt="Wedding Story" class="portfolio-img absolute inset-0 w-full h-full object-cover">
+                        <div class="portfolio-overlay absolute inset-0"></div>
+                        <div class="absolute bottom-8 left-8 portfolio-text">
+                            <span class="text-[10px] tracking-[0.2em] text-gold uppercase block mb-2">Weddings</span>
+                            <h3 class="font-serif text-3xl md:text-4xl text-white">The love Archive</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="grid-item-2 portfolio-item group cursor-pointer reveal-up" onclick="openGallery('gallery2')">
+                    <div class="relative w-full aspect-[3/4] overflow-hidden bg-charcoal">
+                        <img src="7.jpg"alt="Engagement Story" class="portfolio-img absolute inset-0 w-full h-full object-cover">
+                        <div class="portfolio-overlay absolute inset-0"></div>
+                        <div class="absolute bottom-8 left-8 portfolio-text">
+                            <span class="text-[10px] tracking-[0.2em] text-gold uppercase block mb-2">Engagements</span>
+                            <h3 class="font-serif text-2xl md:text-3xl text-white">Urban Romance</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="grid-item-3 portfolio-item group cursor-pointer reveal-up" onclick="openGallery('gallery3')">
+                    <div class="relative w-full aspect-square overflow-hidden bg-charcoal">
+                        <img src="1000437241.jpg"alt="Portraits" class="portfolio-img absolute inset-0 w-full h-full object-cover">
+                        <div class="portfolio-overlay absolute inset-0"></div>
+                        <div class="absolute bottom-8 left-8 portfolio-text">
+                            <span class="text-[10px] tracking-[0.2em] text-gold uppercase block mb-2">Portraits</span>
+                            <h3 class="font-serif text-2xl md:text-3xl text-white"> Editorial Shadows</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="grid-item-4 portfolio-item group cursor-pointer reveal-up" onclick="openGallery('gallery4')">
+                    <div class="relative w-full aspect-[16/9] lg:aspect-[4/5] overflow-hidden bg-charcoal">
+                        <img src="1000437967.webp"alt="Cinematic Stories" class="portfolio-img absolute inset-0 w-full h-full object-cover">
+                        <div class="portfolio-overlay absolute inset-0"></div>
+                        <div class="absolute bottom-8 left-8 portfolio-text">
+                            <span class="text-[10px] tracking-[0.2em] text-gold uppercase block mb-2">UNTOLD</span>
+                            <h3 class="font-serif text-3xl md:text-4xl text-white"> Stories beyond words </h3>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="mt-32 text-center reveal-up">
+                <a href="#" class="inline-block border-b border-gold text-xs tracking-[0.2em] font-light pb-2 hover:text-gold transition-colors duration-300">VIEW ALL ARCHIVES</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-32 px-6 md:px-12 lg:px-24 bg-charcoal text-ivory">
+        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-20">
+            <!-- Left: Sticky Title -->
+            <div class="lg:w-1/3">
+                <div class="sticky top-32 reveal-up">
+                    <h2 class="font-serif text-4xl md:text-5xl leading-tight mb-6">The Art of <br>Preserving Moments</h2>
+                    <p class="font-light text-sm text-gray-400 leading-relaxed mb-8">
+                        We approach each assignment as a bespoke creation. Drawing inspiration from fine art, cinema, and authentic human connection, we craft imagery that endures.
+                    </p>
+                    <a href="#contact" class="px-8 py-3 border border-gray-600 text-[10px] tracking-[0.2em] hover:bg-white hover:text-black transition-all duration-500">INQUIRE NOW</a>
+                </div>
+            </div>
+
+            <!-- Right: Services List -->
+            <div class="lg:w-2/3">
+                <ul class="flex flex-col">
+                    <!-- Service 1 -->
+                    <li class="py-12 border-b border-white/10 group reveal-up">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                            <div>
+                                <span class="text-[10px] text-gold tracking-[0.2em] mb-2 block">01</span>
+                                <h3 class="font-serif text-3xl group-hover:text-gold transition-colors duration-500">Weddings & Elopements</h3>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-sm font-light text-gray-400 max-w-xs md:text-right">
+                                Comprehensive coverage for discerning couples worldwide.
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Service 2 -->
+                    <li class="py-12 border-b border-white/10 group reveal-up">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                            <div>
+                                <span class="text-[10px] text-gold tracking-[0.2em] mb-2 block">02</span>
+                                <h3 class="font-serif text-3xl group-hover:text-gold transition-colors duration-500">Engagement & Pre-Wedding</h3>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-sm font-light text-gray-400 max-w-xs md:text-right">
+                                Stylized narrative sessions exploring your unique bond.
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Service 3 -->
+                    <li class="py-12 border-b border-white/10 group reveal-up">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                            <div>
+                                <span class="text-[10px] text-gold tracking-[0.2em] mb-2 block">03</span>
+                                <h3 class="font-serif text-3xl group-hover:text-gold transition-colors duration-500">Editorial & Fashion</h3>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-sm font-light text-gray-400 max-w-xs md:text-right">
+                                Creative direction and execution for luxury brands and publications.
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Service 4 -->
+                    <li class="py-12 border-b border-white/10 group reveal-up">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                            <div>
+                                <span class="text-[10px] text-gold tracking-[0.2em] mb-2 block">04</span>
+                                <h3 class="font-serif text-3xl group-hover:text-gold transition-colors duration-500">Fine Art Portraits</h3>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-sm font-light text-gray-400 max-w-xs md:text-right">
+                                Intimate, meticulously lit studio and environmental portraits.
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-deep pt-32 pb-12 px-6 md:px-12 lg:px-24 border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col items-center text-center">
+            <h2 class="font-serif text-5xl md:text-7xl mb-8">Let's Create Together.</h2>
+            <a href="mailto:harish10307hh@gmail.com"class="text-xl md:text-2xl font-light hover:text-gold transition-colors duration-300 mb-16">harish10307hh@gmail.com</a>
+            
+            <div class="w-full flex flex-col md:flex-row justify-between items-center border-t border-white/10 pt-8 mt-12 text-[10px] tracking-[0.2em] text-gray-500 font-light uppercase">
+                <p>&copy2026 MIC & Co. All Rights Reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Instagram-@makeitcreaties.co</a>
+                    <a href="#" class="hover:text-white transition-colors">EMAIL-harish10307hh@gmail.com</a>
+                    <a href="#" class="hover:text-white transition-colors">CONTACT NO:8248673464</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Full-Screen Gallery Modal -->
+    <div id="gallery-modal" class="fixed inset-0 bg-deep z-[100] flex flex-col opacity-0 pointer-events-none transition-opacity duration-700 ease-in-out">
+        
+        <!-- Modal Navigation -->
+        <div class="absolute top-0 w-full p-8 flex justify-between items-center z-10 mix-blend-difference text-white">
+            <div id="gallery-counter" class="text-xs font-light tracking-[0.2em]">1 / 10</div>
+            <button id="close-modal" class="text-xs font-light tracking-[0.2em] hover:text-gold transition-colors focus:outline-none">
+                CLOSE [X]
+            </button>
+        </div>
+
+        <!-- Image Container -->
+        <div class="flex-1 relative flex justify-center items-center overflow-hidden cursor-none" id="modal-image-container">
+            <img id="modal-img" src="" alt="Gallery Image" class="max-w-full max-h-screen object-contain opacity-0 transition-opacity duration-500">
+        </div>
+
+        <!-- Bottom Controls & Info -->
+        <div class="absolute bottom-0 w-full p-8 flex justify-between items-end z-10 mix-blend-difference text-white pointer-events-none">
+            <div>
+                <h3 id="gallery-title" class="font-serif text-3xl md:text-4xl mb-1">Project Title</h3>
+                <p id="gallery-category" class="text-[10px] tracking-[0.2em] uppercase text-gold">Category</p>
+            </div>
+            
+            <div class="flex space-x-8 pointer-events-auto">
+                <button id="prev-btn" class="text-xs font-light tracking-[0.2em] hover:text-gold transition-colors focus:outline-none flex items-center">
+                    <span class="mr-2">←</span> PREV
+                </button>
+                <button id="next-btn" class="text-xs font-light tracking-[0.2em] hover:text-gold transition-colors focus:outline-none flex items-center">
+                    NEXT <span class="ml-2">→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Custom Cursor ---
+        const cursor = document.getElementById('custom-cursor');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        portfolioItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                cursor.classList.add('view-mode');
+            });
+            item.addEventListener('mouseleave', () => {
+                cursor.classList.remove('view-mode');
+            });
+        });
+
+        // Hide cursor when leaving window
+        document.addEventListener('mouseleave', () => {
+            cursor.style.opacity = '0';
+        });
+        document.addEventListener('mouseenter', () => {
+            cursor.style.opacity = '1';
+        });
+
+
+        // --- 2. Navbar Scroll Effect ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.remove('mix-blend-difference', 'py-6');
+                navbar.classList.add('bg-deep/95', 'py-4', 'border-b', 'border-white/5');
+            } else {
+                navbar.classList.add('mix-blend-difference', 'py-6');
+                navbar.classList.remove('bg-deep/95', 'py-4', 'border-b', 'border-white/5');
+            }
+        });
+
+
+        // --- 3. Hero Background Slider ---
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        // Change image every 5 seconds
+        setInterval(nextSlide, 5000);
+
+
+        // --- 4. Scroll Reveal Animations ---
+        const revealElements = document.querySelectorAll('.reveal-up');
+        
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Reveal only once
+                }
+            });
+        }, {
+            root: null,
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+        
+        // Trigger initial reveal for elements in viewport on load
+        setTimeout(() => {
+            revealElements.forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) {
+                    el.classList.add('active');
+                }
+            });
+        }, 100);
+
+
+        // --- 5. Gallery Modal Logic ---
+        const modal = document.getElementById('gallery-modal');
+        const modalImg = document.getElementById('modal-img');
+        const closeModalBtn = document.getElementById('close-modal');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const galleryTitle = document.getElementById('gallery-title');
+        const galleryCategory = document.getElementById('gallery-category');
+        const galleryCounter = document.getElementById('gallery-counter');
+        const modalContainer = document.getElementById('modal-image-container');
+
+        // Mock data for galleries
+        const galleriesData = {
+            'gallery1': {
+                title: 'Elegance in Tuscany',
+                category: 'Weddings',
+                images: [
+                    '41.jpg.jpg',
+                    'DSC_0090.JPG',
+                    'DSC_0147.JPG'
+                ]
+            },
+            'gallery2': {
+                title: 'Urban Romance',
+                category: 'Engagements',
+                images: [
+                    '7.jpg',
+                    'DSC_0110.JPG',
+                    'DSC_0834.jpg'
+                ]
+            },
+            'gallery3': {
+                title: 'The Innocence Within',
+                category: 'Portraits',
+                images: [
+                    '1000437241.jpg',
+                    '1000450411.jpg',
+                    '1000450407.jpg',
+                    'IMG_0639(1).JPG',
+                    '1000450404.jpg',
+                    'IMG_0632 - Copy.JPG',
+                    'IMG_20260412_201335.jpg',
+                    '999.jpg',
+                    '4.jpg',
+                    '0.jpg'
+                ]
+            },
+            'gallery4': {
+                title: 'UNTOLD',
+                category: 'Stories beyond words',
+                images: [
+                    '1000437922.jpg',
+                    '1000437967.webp',
+                    '1000437968.JPG'
+                    
+                ]
+            }
+        };
+
+        let currentGalleryId = null;
+        let currentImageIndex = 0;
+
+        window.openGallery = function(galleryId) {
+            currentGalleryId = galleryId;
+            currentImageIndex = 0;
+            const data = galleriesData[galleryId];
+            
+            galleryTitle.textContent = data.title;
+            galleryCategory.textContent = data.category;
+            
+            updateGalleryImage();
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            
+            // Customize cursor for modal image container
+            modalContainer.addEventListener('mousemove', handleModalCursor);
+            modalContainer.addEventListener('click', handleModalClick);
+        }
+
+        function closeGallery() {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                modalImg.src = ''; // Clear image source after fade out
+                modalImg.classList.remove('opacity-100');
+                modalImg.classList.add('opacity-0');
+            }, 700);
+            
+            modalContainer.removeEventListener('mousemove', handleModalCursor);
+            modalContainer.removeEventListener('click', handleModalClick);
+            
+            // Reset cursor text
+            cursor.classList.remove('view-mode');
+            cursor.querySelector('.cursor-text').textContent = 'VIEW';
+        }
+
+        function updateGalleryImage() {
+            const data = galleriesData[currentGalleryId];
+            modalImg.classList.remove('opacity-100');
+            modalImg.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                modalImg.src = data.images[currentImageIndex];
+                galleryCounter.textContent = `${currentImageIndex + 1} / ${data.images.length}`;
+                
+                modalImg.onload = () => {
+                    modalImg.classList.remove('opacity-0');
+                    modalImg.classList.add('opacity-100');
+                };
+            }, 300); // Slight delay for smooth crossfade feeling
+        }
+
+        function nextImage() {
+            if(!currentGalleryId) return;
+            const len = galleriesData[currentGalleryId].images.length;
+            currentImageIndex = (currentImageIndex + 1) % len;
+            updateGalleryImage();
+        }
+
+        function prevImage() {
+            if(!currentGalleryId) return;
+            const len = galleriesData[currentGalleryId].images.length;
+            currentImageIndex = (currentImageIndex - 1 + len) % len;
+            updateGalleryImage();
+        }
+
+        // Custom Cursor in Modal (Left/Right split)
+        function handleModalCursor(e) {
+            const rect = modalContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            cursor.classList.add('view-mode');
+            
+            if (x < rect.width / 2) {
+                cursor.querySelector('.cursor-text').textContent = 'PREV';
+            } else {
+                cursor.querySelector('.cursor-text').textContent = 'NEXT';
+            }
+        }
+        
+        function handleModalClick(e) {
+            const rect = modalContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            if (x < rect.width / 2) {
+                prevImage();
+            } else {
+                nextImage();
+            }
+        }
+
+        closeModalBtn.addEventListener('click', closeGallery);
+        nextBtn.addEventListener('click', nextImage);
+        prevBtn.addEventListener('click', prevImage);
+
+        // Keyboard navigation for modal
+        document.addEventListener('keydown', (e) => {
+            if (!modal.classList.contains('pointer-events-none')) {
+                if (e.key === 'Escape') closeGallery();
+                if (e.key === 'ArrowRight') nextImage();
+                if (e.key === 'ArrowLeft') prevImage();
+            }
+        });
+
+    </script>
+</body>
+</html>
